@@ -7,20 +7,12 @@
 #include <kernel/ssfn.h>
 #include <kernel/tty.h>
 
-#include "vga.h"
-
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
-static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
-
-static size_t terminal_row;
-static size_t terminal_column;
-static uint8_t terminal_color;
-static uint16_t* terminal_buffer;
+extern uint8_t fb;
+extern volatile unsigned char _binary_console_sfn_start;
 
 void terminal_initialize(void) {
 	ssfn_src = &_binary_console_sfn_start;      /* the bitmap font to use */
-	ssfn_dst.ptr = 0xE0000000;                  /* framebuffer address and bytes per line */
+	ssfn_dst.ptr = &fb;                  /* framebuffer address and bytes per line */
 	ssfn_dst.p = 4096;
 	ssfn_dst.fg = 0xFFFFFFFF;                   /* colors, white on black */
 	ssfn_dst.bg = 0;
@@ -28,8 +20,12 @@ void terminal_initialize(void) {
 	ssfn_dst.y = 200;
 }
 
-void terminal_putentryat(unsigned char c) {
-	
+void terminal_putentryat(char *s) {
+	if(*s == '\n') {
+    		ssfn_dst.y += ssfn_src->height;
+    		ssfn_dst.x = 0;
+	} else
+    		ssfn_putc(*s);
 }
 
 void terminal_putchar(char c) {
