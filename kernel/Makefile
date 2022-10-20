@@ -13,11 +13,7 @@ EXEC_PREFIX?=$(PREFIX)
 BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
-<<<<<<< HEAD
-CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding
-=======
 CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding -mcmodel=kernel -mno-red-zone
->>>>>>> 9a9b1887c3082e2334d9f5f99826d2af0e89420b
 CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
 LIBS:=$(LIBS) -nostdlib -lk -lgcc
@@ -34,11 +30,7 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
-<<<<<<< HEAD
-font/unifont.o
-=======
 unifont.o
->>>>>>> 9a9b1887c3082e2334d9f5f99826d2af0e89420b
 
 OBJS=\
 $(ARCHDIR)/crti.o \
@@ -62,19 +54,11 @@ $(ARCHDIR)/crtn.o \
 all: myos.kernel
 
 myos.kernel: $(OBJS) $(ARCHDIR)/linker.ld
-<<<<<<< HEAD
-   $(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
-   x86_64-elf-strip -s -K mmio -K fb -K bootboot -K environment -K initstack myos.kernel
-
-font/unifont.o:
-   x86_64-elf-ld -r -b binary -o font/unifont.o font/unifont.sfn
-=======
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	x86_64-elf-strip -s -K mmio -K fb -K bootboot -K environment -K initstack myos.kernel
 
 unifont.o: 
 	x86_64-elf-ld -r -b binary -o unifont.o unifont.sfn
->>>>>>> 9a9b1887c3082e2334d9f5f99826d2af0e89420b
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
    OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
