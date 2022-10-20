@@ -2,3 +2,4 @@
 isodir
 sysroot
 meaty-skeleton
+libc/libk.a
