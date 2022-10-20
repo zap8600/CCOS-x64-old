@@ -11,7 +11,7 @@ extern uint8_t fb;
 extern volatile unsigned char _binary_console_sfn_start;
 
 void terminal_initialize(void) {
-	ssfn_src = &_binary_console_sfn_start;      /* the bitmap font to use */
+	ssfn_src = &_binary_unifont_sfn_start;      /* the bitmap font to use */
 	ssfn_dst.ptr = &fb;                  /* framebuffer address and bytes per line */
 	ssfn_dst.p = 4096;
 	ssfn_dst.fg = 0xFFFFFFFF;                   /* colors, white on black */

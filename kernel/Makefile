@@ -13,7 +13,7 @@ EXEC_PREFIX?=$(PREFIX)
 BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
-CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding
+CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding -mcmodel=kernel -mno-red-zone
 CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
 LIBS:=$(LIBS) -nostdlib -lk -lgcc
@@ -30,7 +30,7 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
-font/unifont.o
+unifont.o
 
 OBJS=\
 $(ARCHDIR)/crti.o \
@@ -57,8 +57,8 @@ myos.kernel: $(OBJS) $(ARCHDIR)/linker.ld
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	x86_64-elf-strip -s -K mmio -K fb -K bootboot -K environment -K initstack myos.kernel
 
-font/unifont.o: 
-	x86_64-elf-ld -r -b binary -o font/unifont.o font/unifont.sfn
+unifont.o: 
+	x86_64-elf-ld -r -b binary -o unifont.o unifont.sfn
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
