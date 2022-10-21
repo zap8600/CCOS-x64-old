@@ -30,7 +30,7 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
-unifont.o \
+font.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \
@@ -57,8 +57,8 @@ myos.kernel: $(OBJS) $(ARCHDIR)/linker.ld
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	x86_64-elf-strip -s -K mmio -K fb -K bootboot -K environment -K initstack myos.kernel
 
-unifont.o:
-	x86_64-elf-ld -r -b binary -o unifont.o unifont.sfn
+font.o:
+	x86_64-elf-ld -r -b binary -o font.o font.sfn
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@

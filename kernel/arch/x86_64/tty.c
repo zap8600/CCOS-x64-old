@@ -8,10 +8,10 @@
 #include <kernel/tty.h>
 
 extern uint8_t fb;
-extern ssfn_font_t _binary_unifont_sfn_start;
+extern ssfn_font_t _binary_font_sfn_start;
 
 void terminal_initialize(void) {
-   ssfn_src = &_binary_unifont_sfn_start;      /* the bitmap font to use */
+   ssfn_src = &_binary_font_sfn_start;      /* the bitmap font to use */
    ssfn_dst.ptr = &fb;                  /* framebuffer address and bytes per line */
    ssfn_dst.p = 4096;
    ssfn_dst.fg = 0xFFFFFFFF;                   /* colors, white on black */
