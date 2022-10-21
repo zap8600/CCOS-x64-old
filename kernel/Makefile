@@ -13,7 +13,7 @@ EXEC_PREFIX?=$(PREFIX)
 BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
-CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding -mcmodel=kernel -mno-red-zone
+CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding -mcmodel=kernel -mno-red-zone -nostdlib
 CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
 LIBS:=$(LIBS) -nostdlib -lk -lgcc
@@ -54,7 +54,7 @@ $(ARCHDIR)/crtn.o \
 all: myos.kernel
 
 myos.kernel: $(OBJS) $(ARCHDIR)/linker.ld
-	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
+	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST) -z max-page-size=0x1000
 	x86_64-elf-strip -s -K mmio -K fb -K bootboot -K environment -K initstack myos.kernel
 
 unifont.o:

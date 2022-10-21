@@ -8,7 +8,7 @@
 #include <kernel/tty.h>
 
 extern uint8_t fb;
-extern volatile unsigned char _binary_unifont_sfn_start;
+extern ssfn_font_t _binary_unifont_sfn_start;
 
 void terminal_initialize(void) {
    ssfn_src = &_binary_unifont_sfn_start;      /* the bitmap font to use */
@@ -20,12 +20,12 @@ void terminal_initialize(void) {
    ssfn_dst.y = 200;
 }
 
-void terminal_putentryat(char *s) {
-   if(*s == '\n') {
+void terminal_putentryat(char s) {
+   if(s == '\n') {
           ssfn_dst.y += ssfn_src->height;
           ssfn_dst.x = 0;
    } else
-          ssfn_putc(*s);
+          ssfn_putc(s);
 }
 
 void terminal_putchar(char c) {
