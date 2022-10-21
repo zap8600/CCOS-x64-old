@@ -2,3 +2,5 @@
 isodir
 sysroot
 meaty-skeleton
+*.json
+*.img
