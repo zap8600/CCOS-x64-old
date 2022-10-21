@@ -4,3 +4,4 @@ sysroot
 meaty-skeleton
 *.json
 *.img
+mkbootimg
