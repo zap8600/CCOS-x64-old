@@ -74,7 +74,7 @@ clean:
 	rm -f $(OBJS) *.o */*.o */*/*.o
 	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
-install: install-headers install-kernel
+install: install-headers install-kernel install-config
 
 install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
@@ -83,5 +83,8 @@ install-headers:
 install-kernel: myos.kernel
 	mkdir -p $(DESTDIR)$(BOOTDIR)
 	cp myos.kernel $(DESTDIR)$(BOOTDIR)
+
+install-config:
+	cat "kernel=boot/myos.kernel" > $(DESTDIR)$(BOOTDIR)/config
 
 -include $(OBJS:.o=.d)
