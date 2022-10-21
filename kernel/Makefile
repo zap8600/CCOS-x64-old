@@ -85,6 +85,6 @@ install-kernel: myos.kernel
 	cp myos.kernel $(DESTDIR)$(BOOTDIR)
 
 install-config:
-	cat "kernel=boot/myos.kernel" > $(DESTDIR)$(BOOTDIR)/config
+	echo 'kernel=boot/myos.kernel' > $(DESTDIR)$(BOOTDIR)/config
 
 -include $(OBJS:.o=.d)
