@@ -54,7 +54,7 @@ $(ARCHDIR)/crtn.o \
 all: myos.kernel
 
 myos.kernel: $(OBJS) $(ARCHDIR)/linker.ld
-	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST) -z max-page-size=0x1000
+	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	x86_64-elf-strip -s -K mmio -K fb -K bootboot -K environment -K initstack myos.kernel
 
 unifont.o:
