@@ -44,10 +44,6 @@ SECTIONS
         KEEP(*(.text.boot)) *(.text .text.*)   /* code */
         *(.rodata .rodata.*)                   /* data */
         *(.data .data.*)
-<<<<<<< HEAD
-        *(.eh_frame)
-=======
->>>>>>> 7efc6adc70548336b5674b2762ce49c6d8c45178
     } :boot
     .bss (NOLOAD) : {                          /* bss */
         . = ALIGN(16);
@@ -55,9 +51,5 @@ SECTIONS
         *(COMMON)
     } :boot
 
-<<<<<<< HEAD
-    /DISCARD/ : { *(.comment) }
-=======
     /DISCARD/ : { *(.eh_frame) *(.comment) }
->>>>>>> 7efc6adc70548336b5674b2762ce49c6d8c45178
 }
