@@ -2,7 +2,7 @@
 
 #include <kernel/tty.h>
 
-void _start() {
+void kernel_main() {
 	terminal_initialize();
 	printf("Hello, kernel World!\n");
 	while (1) {}

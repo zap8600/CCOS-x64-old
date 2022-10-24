@@ -8,7 +8,8 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-	movl $stack_top, %rsp
+	mov rbp, stack_top
+    mov rsp, rbp
 
     call _init
 
