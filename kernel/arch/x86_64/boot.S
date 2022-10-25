@@ -11,6 +11,10 @@ _start:
     movq $stack_top, %rsp
     movq %rbp, %rsp
 
+    call _init
+
+2:  
+    jmp 2b
     call kernel_main
 
     cli
