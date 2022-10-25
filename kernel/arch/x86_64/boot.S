@@ -8,10 +8,8 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-	mov rbp, stack_top
-    mov rsp, rbp
-
-    call _init
+    movq $stack_top, %rsp
+    movq %rbp, %rsp
 
     call kernel_main
 
