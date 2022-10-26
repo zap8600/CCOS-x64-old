@@ -2,6 +2,4 @@
 isodir
 sysroot
 meaty-skeleton
-*.json
-*.img
-mkbootimg
+limine

@@ -1,4 +1,5 @@
 #include <kernel/tty.h>
+#include <kernel/io.h>
 
 void kernel_main() {
 	terminal_initialize();
