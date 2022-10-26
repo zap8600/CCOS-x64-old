@@ -8,4 +8,5 @@ void kernel_main() {
 	terminal_write("beans!\n");
 	while (1) {}
 	asm volatile ("int $0x3");
+	while (1) {}
 }
