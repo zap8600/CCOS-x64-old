@@ -48,14 +48,15 @@ extern struct regs * _isr31(struct regs*);
 
 typedef struct regs * (*interrupt_handler_t)(struct regs *);
 
-typedef struct {
+typedef struct
+{
    uint16_t offset_1;        // offset bits 0..15
-   uint16_t selector;        // a code segment selector in GDT or LDT
-   uint32_t  ist;             // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
+   uint16_t selector;
+   uint8_t  ist;
    uint8_t  type_attributes; // gate type, dpl, and p fields
    uint16_t offset_2;        // offset bits 16..31
-   uint32_t offset_3;        // offset bits 32..63
-   uint8_t zero;            // reserved
+   uint32_t offset_3;
+   uint32_t zero;
 } __attribute__((packed)) idt_entry_t;
 
 struct idt_pointer
