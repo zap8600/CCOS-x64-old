@@ -3,6 +3,7 @@
 
 #include <kernel/tty.h>
 #include <kernel/limine.h>
+#include <kernel/io.h>
 
 static volatile struct limine_terminal_request terminal_request = {
     .id = LIMINE_TERMINAL_REQUEST,
@@ -23,8 +24,10 @@ void terminal_initialize(void) {
 }
 
 void terminal_write(const char* data) {
+    int i;
+    for(i = 0; data[i] != '\0'; ++i);
     struct limine_terminal *terminal = terminal_request.response->terminals[0];
-    terminal_request.response->write(terminal, data, 11);
+    terminal_request.response->write(terminal, data, i);
 }
 
 void terminal_writestring(const char* data) {

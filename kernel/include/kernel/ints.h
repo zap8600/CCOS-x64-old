@@ -66,3 +66,4 @@ struct idt_pointer
 
 void isr_handler();
 void init_idt();
+void idt_set_gate(int n, interrupt_handler_t handler);
