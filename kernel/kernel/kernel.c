@@ -4,8 +4,8 @@
 #include <kernel/ints.h>
 
 void kernel_main() {
-	terminal_initialize();
 	init_gdt();
+	terminal_initialize();
 	init_idt();
 	terminal_write("Cotton Candy OS\n");
 	terminal_write("WIP\n");
