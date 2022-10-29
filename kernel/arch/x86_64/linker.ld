@@ -39,10 +39,6 @@ SECTIONS
     .data : {
         *(.data .data.*)
     } :data
-
-    .eh_frame : {
-        *(.eh_frame)
-    }
  
     .bss : {
         *(COMMON)
@@ -51,6 +47,7 @@ SECTIONS
  
     /* Discard .note.* and .eh_frame since they may cause issues on some hosts. */
     /DISCARD/ : {
+        *(.eh_frame)
         *(.note .note.*)
     }
 }
