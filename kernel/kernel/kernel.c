@@ -5,8 +5,8 @@
 
 void kernel_main() {
 	init_gdt();
-	while (1) {}
 	terminal_initialize();
 	terminal_write("Cotton Candy OS\n");
 	terminal_write("WIP\n");
+	while (1) {}
 }

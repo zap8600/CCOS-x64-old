@@ -43,7 +43,7 @@ typedef struct  {
 
 FullGDT gdt[32] __attribute__((used)) = {{
    {
-      {0x0000, 0x0000, 0x00, 0x00, 0x00, 0x00},
+	  {0x0000, 0x0000, 0x00, 0x00, 0x00, 0x00},
       {0xF, 0x0000, 0x00, 0x9A, (1 << 7) | 0x00, 0x00},
       {0xF, 0x0000, 0x00, 0x92, (1 << 7) | 0x00, 0x00},
       {0xFFFF, 0x0000, 0x00, 0x9A, (1 << 6) | (1 << 7) | 0x0F, 0x00},
@@ -60,7 +60,7 @@ FullGDT gdt[32] __attribute__((used)) = {{
 void init_gdt()
 {
     for (int i = 1; i < 32; ++i) {
-		kmemcpy(&gdt[i], &gdt[0], sizeof(*gdt));
+		memcpy(&gdt[i], &gdt[0], sizeof(*gdt));
 	}
 
     for (int i = 0; i < 32; ++i) {
@@ -68,10 +68,10 @@ void init_gdt()
 		gdt[i].pointer.base  = (uintptr_t)&gdt[i].entries;
 
 		uintptr_t addr = (uintptr_t)&gdt[i].tss;
-		gdt[i].entries[5].limit_low = sizeof(gdt[i].tss);
-		gdt[i].entries[5].base_low = (addr & 0xFFFF);
-		gdt[i].entries[5].base_middle = (addr >> 16) & 0xFF;
-		gdt[i].entries[5].base_high = (addr >> 24) & 0xFF;
+		gdt[i].entries[7].limit_low = sizeof(gdt[i].tss);
+		gdt[i].entries[7].base_low = (addr & 0xFFFF);
+		gdt[i].entries[7].base_middle = (addr >> 16) & 0xFF;
+		gdt[i].entries[7].base_high = (addr >> 24) & 0xFF;
 		gdt[i].tss_extra.base_highest = (addr >> 32) & 0xFFFFFFFF;
 	}
 
