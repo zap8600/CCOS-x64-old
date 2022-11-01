@@ -7,10 +7,49 @@
 static struct idt_pointer idtp;
 static idt_entry_t idt[256];
 
+char *exception_messages[] = {
+    "Division By Zero",
+    "Debug",
+    "Non Maskable Interrupt",
+    "Breakpoint",
+    "Into Detected Overflow",
+    "Out of Bounds",
+    "Invalid Opcode",
+    "No Coprocessor",
 
-void isr_handler()
+    "Double Fault",
+    "Coprocessor Segment Overrun",
+    "Bad TSS",
+    "Segment Not Present",
+    "Stack Fault",
+    "General Protection Fault",
+    "Page Fault",
+    "Unknown Interrupt",
+
+    "Coprocessor Fault",
+    "Alignment Check",
+    "Machine Check",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved",
+    "Reserved"
+};
+
+void isr_handler(registers_t r)
 {
-    terminal_write("Received ISR!\n");
+    terminal_writestring("Received ISR: ");
+    terminal_writestring(exception_messages[r.int_no]);
+    terminal_writestring("\n");
 }
 
 void init_idt()
@@ -62,7 +101,7 @@ void idt_set_gate(int n, interrupt_handler_t handler)
     idt[n].offset_1 = base & 0xFFFF;
     idt[n].selector = 0x28;
     idt[n].ist = 0;
-    idt[n].type_attributes = 0x8F;
+    idt[n].type_attributes = 0x8E;
     idt[n].offset_2 = (base >> 16) & 0xFFFF;
     idt[n].offset_3 = (base >> 32) & 0xFFFFFFFF;
     idt[n].zero = 0;
