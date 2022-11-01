@@ -1,4 +1,3 @@
-# Reserve a stack for the initial thread.
 .section .bss
 .align 16
 stack_bottom:
