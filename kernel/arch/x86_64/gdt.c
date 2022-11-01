@@ -66,10 +66,10 @@ void init_gdt()
 		gdt[i].pointer.base  = (uintptr_t)&gdt[i].entries;
 
 		uintptr_t addr = (uintptr_t)&gdt[i].tss;
-		gdt[i].entries[7].limit_low = sizeof(gdt[i].tss);
-		gdt[i].entries[7].base_low = (addr & 0xFFFF);
-		gdt[i].entries[7].base_middle = (addr >> 16) & 0xFF;
-		gdt[i].entries[7].base_high = (addr >> 24) & 0xFF;
+		gdt[i].entries[5].limit_low = sizeof(gdt[i].tss);
+		gdt[i].entries[5].base_low = (addr & 0xFFFF);
+		gdt[i].entries[5].base_middle = (addr >> 16) & 0xFF;
+		gdt[i].entries[5].base_high = (addr >> 24) & 0xFF;
 		gdt[i].tss_extra.base_highest = (addr >> 32) & 0xFFFFFFFF;
 	}
 
