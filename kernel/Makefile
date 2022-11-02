@@ -16,7 +16,7 @@ INCLUDEDIR?=$(PREFIX)/include
 CFLAGS:=$(CFLAGS) -Wall -Wextra -ffreestanding -mcmodel=kernel -mno-red-zone
 CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude
 LDFLAGS:=$(LDFLAGS)
-LIBS:=$(LIBS) -nostdlib -lgcc
+LIBS:=$(LIBS) -nostdlib -lgcc -L./dbg -ldbg
 
 ARCHDIR=arch/$(HOSTARCH)
 
@@ -45,21 +45,28 @@ $(LIBS) \
 
 all: myos.elf
 
-myos.elf: $(OBJS) $(ARCHDIR)/linker.ld
+include/kernel/limine.h:
+	curl https://raw.githubusercontent.com/limine-bootloader/limine/trunk/limine.h -o $@
+
+myos.elf: $(OBJS) $(ARCHDIR)/linker.ld dbg/libdbg.a
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 
-.c.o:
+dbg/libdbg.a:
+	make -C dbg
+
+.c.o: include/kernel/limine.h:
 	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
 
-.S.o:
+.S.o: include/kernel/limine.h:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 clean:
 	rm -f myos.elf
 	rm -f $(OBJS) *.o */*.o */*/*.o
 	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
+	rm -f dbg/libdbg.a
 
-install: install-headers install-kernel
+install: install-headers install-kernel install-limine
 
 install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
@@ -68,5 +75,9 @@ install-headers:
 install-kernel: myos.elf
 	mkdir -p $(DESTDIR)$(BOOTDIR)
 	cp myos.elf $(DESTDIR)$(BOOTDIR)
+
+install-limine:
+	git clone https://github.com/limine-bootloader/limine.git --branch=v4.x-branch-binary --depth=1
+	make -C limine
 
 -include $(OBJS:.o=.d)

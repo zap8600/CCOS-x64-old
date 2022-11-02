@@ -2,14 +2,15 @@
 set -e
 . ./build.sh
 
-mkdir -p isodir
-mkdir -p isodir/boot
-mkdir -p isodir/boot/grub
-
-cp sysroot/boot/myos.kernel isodir/boot/myos.kernel
-cat > isodir/boot/grub/grub.cfg << EOF
-menuentry "myos" {
-	multiboot /boot/myos.kernel
-}
+cat > sysroot/boot/limine.cfg << EOF
+# Timeout in seconds that Limine will use before automatically booting.
+TIMEOUT=5
+ 
+# The entry name that will be displayed in the boot menu
+:myOS
+    # Change the protocol line depending on the used protocol.
+    PROTOCOL=limine
+ 
+    # Path to the kernel to boot. boot:/// represents the partition on which limine.cfg is located.
+    KERNEL_PATH=boot:///boot/myos.elf
 EOF
-grub-mkrescue -o myos.iso isodir

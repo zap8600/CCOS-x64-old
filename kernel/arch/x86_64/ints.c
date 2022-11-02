@@ -3,6 +3,7 @@
 #include <kernel/tty.h>
 #include <kernel/io.h>
 #include <kernel/ints.h>
+#include <kernel/dbg.h>
 
 static struct idt_pointer idtp;
 static idt_entry_t idt[256];
@@ -47,9 +48,12 @@ char *exception_messages[] = {
 
 void isr_handler(registers_t *r)
 {
+    dbg_saveregs();
     terminal_writestring("Received ISR: ");
     terminal_writestring(exception_messages[r->int_no]);
     terminal_writestring("\n");
+    dbg_main(r->int_no);
+    dbg_loadregs();
 }
 
 void init_idt()

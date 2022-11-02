@@ -2,6 +2,7 @@
 #include <kernel/io.h>
 #include <kernel/gdt.h>
 #include <kernel/ints.h>
+#include <kernel/dbg.h>
 
 void kernel_main()
 {
@@ -10,7 +11,7 @@ void kernel_main()
 	init_idt();
 	terminal_writestring("Cotton Candy OS\n");
 	terminal_writestring("WIP\n");
-	asm volatile ("int $0x3");
+	breakpoint;
 	terminal_writestring("It works!\n");
 	while (1) {}
 }
