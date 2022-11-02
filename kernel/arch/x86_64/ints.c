@@ -45,10 +45,10 @@ char *exception_messages[] = {
     "Reserved"
 };
 
-void isr_handler(registers_t r)
+void isr_handler(registers_t *r)
 {
     terminal_writestring("Received ISR: ");
-    terminal_writestring(exception_messages[r.int_no]);
+    terminal_writestring(exception_messages[r->int_no]);
     terminal_writestring("\n");
 }
 
