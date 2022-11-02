@@ -80,7 +80,6 @@ isr_common:
 
     mov %rsp, %rdi
     call isr_handler
-    mov %rax, %rsp
 
     pop %r15
     pop %r14

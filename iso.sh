@@ -7,15 +7,9 @@ CPPFLAGS=
 CFLAGS="-g -O2 -pipe -Wall -Wextra"
 LDFLAGS=
 
-DIR=./limine
-if [ -d "$DIR" ];
-then
-    
-else
-	git clone https://github.com/limine-bootloader/limine.git --branch=v4.x-branch-binary --depth=1
+git clone https://github.com/limine-bootloader/limine.git --branch=v4.x-branch-binary --depth=1
 
-    make -C limine
-fi
+make -C limine
 
 cp limine/limine-cd.bin limine/limine-cd-efi.bin limine/limine.sys sysroot/boot/
 
