@@ -9,3 +9,4 @@ done
 rm -rf sysroot
 rm -rf isodir
 rm -rf image.iso
+rm -rf limine
