@@ -5,11 +5,11 @@
 #include <kernel/stdio.h>
 #include <kernel/mem.h>
  
-void k_heapBMInit(KHEAPBM *heap) {
+void kheapinit(KHEAPBM *heap) {
 	heap->fblock = 0;
 }
  
-int k_heapBMAddBlock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsize) {
+int kaddblock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsize) {
 	KHEAPBLOCKBM *b;
 	uint32_t bcnt;
 	uint32_t x;
@@ -43,7 +43,7 @@ int k_heapBMAddBlock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsiz
 	return 1;
 }
  
-static uint8 k_heapBMGetNID(uint8_t a, uint8_t b) {
+static uint8_t k_heapBMGetNID(uint8_t a, uint8_t b) {
 	uint8_t c;	
 	for (c = a + 1; c == b || c == 0; ++c);
 	return c;
