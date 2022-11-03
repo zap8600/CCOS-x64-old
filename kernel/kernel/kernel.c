@@ -15,9 +15,7 @@ void kernel_main()
 	init_idt();
 	printf("Cotton Candy OS\n");
 	printf("WIP\n");
-	init_mem();
 	breakpoint;
 	printf("It works!\n");
-	malloc(0x1000);
 	while (1) {}
 }
