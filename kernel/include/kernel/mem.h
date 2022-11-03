@@ -4,4 +4,4 @@
 #include <kernel/stdio.h>
 
 void init_mem();
-void *malloc(size_t size);
+uint64_t malloc(size_t size);

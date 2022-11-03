@@ -5,9 +5,9 @@
 #include <kernel/stdio.h>
 #include <kernel/mem.h>
 
-uintptr_t freebase;
-uintptr_t freetop;
-extern uintptr_t _kernel_end;
+uint64_t freebase;
+uint64_t freetop;
+extern uint64_t _kernel_end;
 
 void init_mem()
 {
@@ -15,17 +15,18 @@ void init_mem()
     freetop = 0xffffffffffe09000;
 }
 
-void *malloc(size_t size)
+uint64_t malloc(size_t size)
 {
-    void *ptr;
+    uint64_t ptr;
 
     if((freetop - freebase) < size) {
-        printf("Error! Not enough memory avalible to allocate memory!");
-        return -1;
+        printf("Error! Not enough memory avalible to allocate memory!\n");
+        printf("Setting ptr to 0x0!\n");
+        ptr = 0x0;
     } else {
         ptr = freebase + size;
-        freebase = freebase + size;
-        printf("ptr = %x", ptr);
-        return ptr;
+        freebase += size;
+        printf("ptr: %x\n", ptr);
     }
+    return ptr;
 }

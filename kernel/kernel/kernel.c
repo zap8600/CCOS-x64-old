@@ -6,6 +6,8 @@
 #include <kernel/stdio.h>
 #include <kernel/mem.h>
 
+extern uint64_t _kernel_end;
+
 void kernel_main()
 {
 	init_gdt();
@@ -13,8 +15,9 @@ void kernel_main()
 	init_idt();
 	printf("Cotton Candy OS\n");
 	printf("WIP\n");
+	init_mem();
 	breakpoint;
 	printf("It works!\n");
-	malloc(0x1000);
+	printf("%x", _kernel_end);
 	while (1) {}
 }
