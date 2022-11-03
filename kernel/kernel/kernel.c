@@ -18,6 +18,6 @@ void kernel_main()
 	init_mem();
 	breakpoint;
 	printf("It works!\n");
-	printf("%x", _kernel_end);
+	malloc(0x1000);
 	while (1) {}
 }

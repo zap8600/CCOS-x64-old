@@ -15,18 +15,18 @@ void init_mem()
     freetop = 0xffffffffffe09000;
 }
 
-uint64_t malloc(size_t size)
+void *malloc(size_t size)
 {
-    uint64_t ptr;
+    void *ptr;
 
     if((freetop - freebase) < size) {
-        printf("Error! Not enough memory avalible to allocate memory!\n");
-        printf("Setting ptr to 0x0!\n");
+        printf("Error! Not enough memory avalible to allocate memory!");
         ptr = 0x0;
+        return ptr;
     } else {
-        ptr = freebase + size;
+        ptr = freebase;
         freebase += size;
-        printf("ptr: %x\n", ptr);
+        printf("ptr = %x", ptr);
+        return ptr;
     }
-    return ptr;
 }
