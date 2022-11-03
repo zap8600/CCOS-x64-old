@@ -3,15 +3,18 @@
 #include <kernel/gdt.h>
 #include <kernel/ints.h>
 #include <kernel/dbg.h>
+#include <kernel/stdio.h>
+#include <kernel/mem.h>
 
 void kernel_main()
 {
 	init_gdt();
 	terminal_initialize();
 	init_idt();
-	terminal_writestring("Cotton Candy OS\n");
-	terminal_writestring("WIP\n");
+	printf("Cotton Candy OS\n");
+	printf("WIP\n");
 	breakpoint;
-	terminal_writestring("It works!\n");
+	printf("It works!\n");
+	malloc(0x1000);
 	while (1) {}
 }

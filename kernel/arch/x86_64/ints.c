@@ -3,6 +3,7 @@
 #include <kernel/tty.h>
 #include <kernel/io.h>
 #include <kernel/ints.h>
+#include <kernel/dbg.h>
 
 static struct idt_pointer idtp;
 static idt_entry_t idt[256];
