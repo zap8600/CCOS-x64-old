@@ -15,9 +15,6 @@ typedef struct _KHEAPBM {
 	KHEAPBLOCKBM *fblock;
 } KHEAPBM;
 
-void _kernel_end(void);
-unsigned int vaddr = (unsigned int) &_kernel_end;
-
 void kheapinit(KHEAPBM *heap);
 int kaddblock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsize);
 void *kmalloc(KHEAPBM *heap, uint32_t size);

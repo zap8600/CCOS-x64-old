@@ -6,6 +6,9 @@
 #include <kernel/stdio.h>
 #include <kernel/mem.h>
 
+void _kernel_end(void);
+uintptr_t vaddr = (uintptr_t) &_kernel_end;
+
 KHEAPBM kheap;
 char *ptr;
 
