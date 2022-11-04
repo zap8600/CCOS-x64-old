@@ -67,10 +67,22 @@ char *exception_messages[] = {
     "Reserved"
 };
 
+char *pagefault_error[] = {
+    "Kernel mode process tried to read a non-present page entry",
+    "Kernel mode process tried to read a page and caused a protection fault",
+    "Kernel mode process tried to write to a non-present page entry",
+    "Kernel mode process tried to write a page and caused a protection fault"
+};
+
 void isr_handler(registers_t *r)
 {
     printf("Received ISR. The ISR number is %d. ", r->int_no);
     printf("The exception is %s.\n", exception_messages[r->int_no]);
+    if(r->int_no == 14)
+    {
+        printf("Attempting to handle the page fault.");
+        
+    }
 }
 
 void irq_handler(registers_t *r)
