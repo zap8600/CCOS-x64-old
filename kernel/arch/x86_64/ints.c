@@ -94,7 +94,7 @@ void isr_handler(registers_t *r)
         {
             printf("Cause of page fault: %s.\n", pagefault_error[3]);
         } else {
-            printf("Cause of page fault: Unknown.\n")
+            printf("Cause of page fault: Unknown.\n");
         }
     }
 }
