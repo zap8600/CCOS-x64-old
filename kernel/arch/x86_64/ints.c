@@ -4,6 +4,7 @@
 #include <kernel/io.h>
 #include <kernel/ints.h>
 #include <kernel/dbg.h>
+#include <kernel/stdio.h>
 
 #define PIC1		0x20		/* IO base address for master PIC */
 #define PIC2		0xA0		/* IO base address for slave PIC */
@@ -68,9 +69,8 @@ char *exception_messages[] = {
 
 void isr_handler(registers_t *r)
 {
-    terminal_writestring("Received ISR: ");
-    terminal_writestring(exception_messages[r->int_no]);
-    terminal_writestring("\n");
+    printf("Received ISR. The ISR number is %d. ", r->int_no);
+    printf("The exception is %s.\n", exception_messages[r->int_no]);
 }
 
 void irq_handler(registers_t *r)

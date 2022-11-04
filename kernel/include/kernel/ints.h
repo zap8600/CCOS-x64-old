@@ -91,8 +91,8 @@ typedef struct {
 	uintptr_t rip, cs, rflags, rsp, ss;
 } registers_t;
 
-void isr_handler();
-void irq_handler(registers_t *r)
+void isr_handler(registers_t *r);
+void irq_handler(registers_t *r);
 void init_ints();
 void idt_set_gate(int n, interrupt_handler_t handler);
 void PIC_sendEOI(unsigned char irq);
