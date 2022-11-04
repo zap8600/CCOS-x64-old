@@ -76,12 +76,26 @@ char *pagefault_error[] = {
 
 void isr_handler(registers_t *r)
 {
-    printf("Received ISR. The ISR number is %d. ", r->int_no);
-    printf("The exception is %s.\n", exception_messages[r->int_no]);
+    printf("Received ISR. ISR number: %d. ", r->int_no);
+    printf("Exception: %s.\n", exception_messages[r->int_no]);
     if(r->int_no == 14)
     {
         printf("Attempting to handle the page fault.");
-        
+        if(!(r->err_code & (1<<0)) && !(r->err_code & (1<<1)) && !(r->err_code & (1<<2)))
+        {
+            printf("Cause of page fault: %s.\n", pagefault_error[0]);
+        } else if((r->err_code & (1<<0)) && !(r->err_code & (1<<1)) && !(r->err_code & (1<<2)))
+        {
+            printf("Cause of page fault: %s.\n", pagefault_error[1]);
+        } else if(!(r->err_code & (1<<0)) && (r->err_code & (1<<1)) && !(r->err_code & (1<<2)))
+        {
+            printf("Cause of page fault: %s.\n", pagefault_error[2]);
+        } else if((r->err_code & (1<<0)) && (r->err_code & (1<<1)) && !(r->err_code & (1<<2)))
+        {
+            printf("Cause of page fault: %s.\n", pagefault_error[3]);
+        } else {
+            printf("Cause of page fault: Unknown.\n")
+        }
     }
 }
 
