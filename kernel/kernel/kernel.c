@@ -7,7 +7,7 @@
 #include <kernel/mem.h>
 
 void _kernel_end(void);
-uintptr_t vaddr = (uintptr_t) &_kernel_end;
+uintptr_t vaddr = (uintptr_t) &_kernel_end + 0x100000;
 
 KHEAPBM kheap;
 char *ptr;
