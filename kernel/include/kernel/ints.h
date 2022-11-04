@@ -44,7 +44,23 @@ extern struct regs * _isr27(struct regs*);
 extern struct regs * _isr28(struct regs*);
 extern struct regs * _isr29(struct regs*);
 extern struct regs * _isr30(struct regs*);
-extern struct regs * _isr31(struct regs*);
+extern struct regs * _isr31(struct regs*);extern struct regs * _irq0(struct regs*);
+extern struct regs * _irq1(struct regs*);
+extern struct regs * _irq2(struct regs*);
+extern struct regs * _irq3(struct regs*);
+extern struct regs * _irq4(struct regs*);
+extern struct regs * _irq5(struct regs*);
+extern struct regs * _irq6(struct regs*);
+extern struct regs * _irq7(struct regs*);
+extern struct regs * _irq8(struct regs*);
+extern struct regs * _irq9(struct regs*);
+extern struct regs * _irq10(struct regs*);
+extern struct regs * _irq11(struct regs*);
+extern struct regs * _irq12(struct regs*);
+extern struct regs * _irq13(struct regs*);
+extern struct regs * _irq14(struct regs*);
+extern struct regs * _irq15(struct regs*);
+
 
 typedef struct regs * (*interrupt_handler_t)(struct regs *);
 
@@ -76,5 +92,8 @@ typedef struct {
 } registers_t;
 
 void isr_handler();
-void init_idt();
+void irq_handler(registers_t *r)
+void init_ints();
 void idt_set_gate(int n, interrupt_handler_t handler);
+void PIC_sendEOI(unsigned char irq);
+void PIC_remap(int offset1, int offset2);
