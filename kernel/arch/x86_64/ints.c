@@ -80,7 +80,7 @@ void isr_handler(registers_t *r)
     printf("Exception: %s.\n", exception_messages[r->int_no]);
     if(r->int_no == 14)
     {
-        printf("Attempting to handle the page fault.");
+        printf("Attempting to handle the page fault.\n");
         if(!(r->err_code & (1<<0)) && !(r->err_code & (1<<1)) && !(r->err_code & (1<<2)))
         {
             printf("Cause of page fault: %s.\n", pagefault_error[0]);
