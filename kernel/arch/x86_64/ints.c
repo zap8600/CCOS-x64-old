@@ -29,6 +29,11 @@
 static struct idt_pointer idtp;
 static idt_entry_t idt[256];
 
+static volatile struct limine_memmap_request memmap_request = {
+    .id = LIMINE_MEMMAP_REQUEST,
+    .revision = 0
+};
+
 char *exception_messages[] = {
     "Division By Zero",
     "Debug",
@@ -99,7 +104,10 @@ void isr_handler(registers_t *r)
         {
             printf("Cause of page fault: Unknown.\n");
         }
-        printf("%x\n", faulting_address);
+        printf("Address: 0x%x\n", &faulting_address);
+        printf("Value: 0x%x\n", faulting_address);
+        struct limine_memmap_entry *memmap_entry = memmap_request.response->entry_count[0];
+        printf("First memory-mapped entry: %d\n", memmap_entry.)
     }
     while (1) {}
 }
