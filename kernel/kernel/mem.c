@@ -4,137 +4,150 @@
 #include <kernel/string.h>
 #include <kernel/stdio.h>
 #include <kernel/mem.h>
- 
-void kheapinit(KHEAPBM *heap) {
-	heap->fblock = 0;
+#include <kernel/limine.h>
+
+uint32_t *frames;
+uint32_t nframes;
+
+static volatile struct limine_memmap_request memmap_request = {
+    .id = LIMINE_MEMMAP_REQUEST,
+    .revision = 0
+};
+
+void _kernel_end(void);
+uintptr_t vaddr = (uintptr_t) &_kernel_end;
+
+struct limine_memmap_entry *memmap_entry = memmap_request.response->entries[1];
+
+void init_mem()
+{
+	uint32_t mem_end_page = 0x1000000;
 }
- 
-int kaddblock(KHEAPBM *heap, uintptr_t addr, uint32_t size, uint32_t bsize) {
-	KHEAPBLOCKBM *b;
-	uint32_t bcnt;
-	uint32_t x;
-	uint8_t *bm;
- 
-	b = (KHEAPBLOCKBM*)addr;
-	b->size = size - sizeof(KHEAPBLOCKBM);
-	b->bsize = bsize;
- 
-	b->next = heap->fblock;
-	heap->fblock = b;
- 
-	bcnt = b->size / b->bsize;
-	bm = (uint8_t*)&b[1];
- 
-	/* clear bitmap */
-	for (x = 0; x < bcnt; ++x) {
-			bm[x] = 0;
-	}
- 
-	/* reserve room for bitmap */
-	bcnt = (bcnt / bsize) * bsize < bcnt ? bcnt / bsize + 1 : bcnt / bsize;
-	for (x = 0; x < bcnt; ++x) {
-			bm[x] = 5;
-	}
- 
-	b->lfb = bcnt - 1;
- 
-	b->used = bcnt;
- 
-	return 1;
+
+void switch_page_directory(page_directory_t *dir)
+{
+   current_directory = dir;
+   asm volatile("mov %0, %%cr3":: "r"(&dir->tablesPhysical));
+   uint32_t cr0;
+   asm volatile("mov %%cr0, %0": "=r"(cr0));
+   cr0 |= 0x80000000;
+   asm volatile("mov %0, %%cr0":: "r"(cr0));
 }
- 
-static uint8_t k_heapBMGetNID(uint8_t a, uint8_t b) {
-	uint8_t c;	
-	for (c = a + 1; c == b || c == 0; ++c);
-	return c;
+
+uint32_t kmalloc_int(uint32_t sz, int align, uint32_t *phys)
+{
+    if (align == 1 && (vaddr & 0xFFFFF000) )
+    {
+        vaddr &= 0xFFFFF000;
+        vaddr += 0x1000;
+    }
+    if (phys)
+    {
+        *phys = vaddr;
+    }
+    uint32_t tmp = vaddr;
+    vaddr += sz;
+    return tmp;
 }
- 
-void *kmalloc(KHEAPBM *heap, uint32_t size) {
-	KHEAPBLOCKBM *b;
-	uint8_t *bm;
-	uint32_t bcnt;
-	uint32_t x, y, z;
-	uint32_t bneed;
-	uint8_t nid;
- 
-	/* iterate blocks */
-	for (b = heap->fblock; b; b = b->next) {
-		/* check if block has enough room */
-		if (b->size - (b->used * b->bsize) >= size) {
- 
-			bcnt = b->size / b->bsize;		
-			bneed = (size / b->bsize) * b->bsize < size ? size / b->bsize + 1 : size / b->bsize;
-			bm = (uint8_t*)&b[1];
- 
-			for (x = (b->lfb + 1 >= bcnt ? 0 : b->lfb + 1); x < b->lfb; ++x) {
-				/* just wrap around */
-				if (x >= bcnt) {
-					x = 0;
-				}		
- 
-				if (bm[x] == 0) {	
-					/* count free blocks */
-					for (y = 0; bm[x + y] == 0 && y < bneed && (x + y) < bcnt; ++y);
- 
-					/* we have enough, now allocate them */
-					if (y == bneed) {
-						/* find ID that does not match left or right */
-						nid = k_heapBMGetNID(bm[x - 1], bm[x + y]);
- 
-						/* allocate by setting id */
-						for (z = 0; z < y; ++z) {
-							bm[x + z] = nid;
-						}
- 
-						/* optimization */
-						b->lfb = (x + bneed) - 2;
- 
-						/* count used blocks NOT bytes */
-						b->used += y;
- 
-						return (void*)(x * b->bsize + (uintptr_t)&b[1]);
-					}
- 
-					/* x will be incremented by one ONCE more in our FOR loop */
-					x += (y - 1);
-					continue;
-				}
-			}
-		}
-	}
- 
-	return 0;
+
+uint32_t kmalloc_a(uint32_t sz)
+{
+    return kmalloc_int(sz, 1, 0);
 }
- 
-void kfree(KHEAPBM *heap, void *ptr) {
-	KHEAPBLOCKBM *b;	
-	uintptr_t ptroff;
-	uint32_t bi, x;
-	uint8_t *bm;
-	uint8_t id;
-	uint32_t max;
- 
-	for (b = heap->fblock; b; b = b->next) {
-		if ((uintptr_t)ptr > (uintptr_t)b && (uintptr_t)ptr < (uintptr_t)b + sizeof(KHEAPBLOCKBM) + b->size) {
-			/* found block */
-			ptroff = (uintptr_t)ptr - (uintptr_t)&b[1];  /* get offset to get block */
-			/* block offset in BM */
-			bi = ptroff / b->bsize;
-			/* .. */
-			bm = (uint8_t*)&b[1];
-			/* clear allocation */
-			id = bm[bi];
-			/* oddly.. GCC did not optimize this */
-			max = b->size / b->bsize;
-			for (x = bi; bm[x] == id && x < max; ++x) {
-				bm[x] = 0;
-			}
-			/* update free block count */
-			b->used -= x - bi;
-			return;
-		}
-	}
- 
-	/* this error needs to be raised or reported somehow */
-	return;
+
+uint32_t kmalloc_p(uint32_t sz, uint32_t *phys)
+{
+    return kmalloc_int(sz, 0, phys);
+}
+
+uint32_t kmalloc_ap(uint32_t sz, uint32_t *phys)
+{
+    return kmalloc_int(sz, 1, phys);
+}
+
+uint32_t kmalloc(uint32_t sz)
+{
+    return kmalloc_int(sz, 0, 0);
+}
+
+#define INDEX_FROM_BIT(a) (a/(8*4))
+#define OFFSET_FROM_BIT(a) (a%(8*4))
+
+static void set_frame(uint32_t frame_addr)
+{
+    uint32_t frame = frame_addr/0x1000;
+    uint32_t idx = INDEX_FROM_BIT(frame);
+    uint32_t off = OFFSET_FROM_BIT(frame);
+    frames[idx] |= (0x1 << off);
+}
+
+static void clear_frame(uint32_t frame_addr)
+{
+    uint32_t frame = frame_addr/0x1000;
+    uint32_t idx = INDEX_FROM_BIT(frame);
+    uint32_t off = OFFSET_FROM_BIT(frame);
+    frames[idx] &= ~(0x1 << off);
+}
+
+static uint32_t test_frame(uint32_t frame_addr)
+{
+    uint32_t frame = frame_addr/0x1000;
+    uint32_t idx = INDEX_FROM_BIT(frame);
+    uint32_t off = OFFSET_FROM_BIT(frame);
+    return (frames[idx] & (0x1 << off));
+}
+
+static uint32_t first_frame()
+{
+    uint32_t i, j;
+    for (i = 0; i < INDEX_FROM_BIT(nframes); i++)
+    {
+        if (frames[i] != 0xFFFFFFFF)
+        {
+            for (j = 0; j < 32; j++)
+            {
+                uint32_t toTest = 0x1 << j;
+                if ( !(frames[i]&toTest) )
+                {
+                    return i*4*8+j;
+                }
+            }
+        }
+    }
+}
+
+void alloc_frame(page_t *page, int is_kernel, int is_writeable)
+{
+    if (page->frame != 0)
+    {
+        return;
+    }
+    else
+    {
+        uint32_t idx = first_frame();
+        if (idx == (uint32_t)-1)
+        {
+            printf("Error! No free frames!\n");
+			while (1) {}
+        }
+        set_frame(idx*0x1000);
+        page->present = 1;
+        page->rw = (is_writeable)?1:0;
+        page->user = (is_kernel)?0:1;
+        page->frame = idx;
+    }
+}
+
+void free_frame(page_t *page)
+{
+    uint32_t frame;
+    if (!(frame=page->frame))
+    {
+        return;
+    }
+    else
+    {
+        clear_frame(frame);
+        page->frame = 0x0;
+    }
 }

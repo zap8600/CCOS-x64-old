@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include <kernel/limine.h>
 #include <kernel/tty.h>
 #include <kernel/io.h>
 #include <kernel/ints.h>
@@ -104,9 +105,9 @@ void isr_handler(registers_t *r)
         {
             printf("Cause of page fault: Unknown.\n");
         }
-        printf("%x\n", faulting_address);
+        printf("Address: 0x%x\n", &faulting_address);
+        printf("Value: 0x%x\n", faulting_address);
     }
-    while (1) {}
 }
 
 void irq_handler(registers_t *r)
