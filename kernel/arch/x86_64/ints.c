@@ -26,6 +26,11 @@
 #define ICW4_BUF_MASTER	0x0C		/* Buffered mode/master */
 #define ICW4_SFNM	0x10		/* Special fully nested (not) */
 
+#define IRQ_CHAIN_SIZE  16
+#define IRQ_CHAIN_DEPTH 4
+static irq_handler_chain_t irq_routines[IRQ_CHAIN_SIZE * IRQ_CHAIN_DEPTH] = { NULL };
+static const char * _irq_handler_descriptions[IRQ_CHAIN_SIZE * IRQ_CHAIN_DEPTH] = { NULL };
+
 static struct idt_pointer idtp;
 static idt_entry_t idt[256];
 
@@ -218,4 +223,14 @@ void PIC_remap(int offset1, int offset2)
  
 	outb(PIC1_DATA, a1);   // restore saved masks.
 	outb(PIC2_DATA, a2);
+}
+
+void irq_install_handler(size_t irq, irq_handler_chain_t handler, const char * desc) {
+	for (size_t i = 0; i < IRQ_CHAIN_DEPTH; i++) {
+		if (irq_routines[i * IRQ_CHAIN_SIZE + irq])
+			continue;
+		irq_routines[i * IRQ_CHAIN_SIZE + irq] = handler;
+		_irq_handler_descriptions[i * IRQ_CHAIN_SIZE + irq ] = desc;
+		break;
+	}
 }
