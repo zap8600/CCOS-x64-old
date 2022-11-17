@@ -9,29 +9,40 @@
 uint32_t *frames;
 uint32_t nframes;
 
-static volatile struct limine_memmap_request memmap_request = {
-    .id = LIMINE_MEMMAP_REQUEST,
-    .revision = 0
-};
+page_directory_t *kernel_directory=0;
+page_directory_t *current_directory=0;
 
 void _kernel_end(void);
 uintptr_t vaddr = (uintptr_t) &_kernel_end;
 
-struct limine_memmap_entry *memmap_entry = memmap_request.response->entries[1];
+#define INDEX_FROM_BIT(a) (a/(8*4))
+#define OFFSET_FROM_BIT(a) (a%(8*4))
 
 void init_mem()
 {
 	uint32_t mem_end_page = 0x1000000;
+
+    nframes = mem_end_page / 0x1000;
+    frames = (uint32_t*)kmalloc(INDEX_FROM_BIT(nframes));
+    memset(frames, 0, INDEX_FROM_BIT(nframes));
+
+    kernel_directory = (page_directory_t*)kmalloc_a(sizeof(page_directory_t));
+    current_directory = kernel_directory;
+
+    int i = 0;
+    while (i < vaddr)
+    {
+        alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
+        i += 0x1000;
+    }
+
+    switch_page_directory(kernel_directory);
 }
 
 void switch_page_directory(page_directory_t *dir)
 {
    current_directory = dir;
    asm volatile("mov %0, %%cr3":: "r"(&dir->tablesPhysical));
-   uint32_t cr0;
-   asm volatile("mov %%cr0, %0": "=r"(cr0));
-   cr0 |= 0x80000000;
-   asm volatile("mov %0, %%cr0":: "r"(cr0));
 }
 
 uint32_t kmalloc_int(uint32_t sz, int align, uint32_t *phys)
@@ -149,5 +160,26 @@ void free_frame(page_t *page)
     {
         clear_frame(frame);
         page->frame = 0x0;
+    }
+}
+
+page_t *get_page(uint32_t address, int make, page_directory_t *dir)
+{
+    address /= 0x1000;
+    uint32_t table_idx = address / 1024;
+    if (dir->tables[table_idx])
+    {
+        return &dir->tables[table_idx]->pages[address%1024];
+    }
+    else if(make)
+    {
+        uint32_t tmp;
+        dir->tables[table_idx] = (page_table_t*)kmalloc_ap(sizeof(page_table_t), &tmp);
+        dir->tablesPhysical[table_idx] = tmp | 0x7;
+        return &dir->tables[table_idx]->pages[address%1024];
+    }
+    else
+    {
+        return 0;
     }
 }

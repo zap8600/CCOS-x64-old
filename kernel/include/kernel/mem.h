@@ -3,6 +3,7 @@
 
 #include <kernel/string.h>
 #include <kernel/stdio.h>
+#include <kernel/limine.h>
 
 typedef struct page
 {
@@ -23,8 +24,8 @@ typedef struct page_table
 typedef struct page_directory
 {
     page_table_t *tables[1024];
-    u32int tablesPhysical[1024];
-    u32int physicalAddr;
+    uint32_t tablesPhysical[1024];
+    uint32_t physicalAddr;
 } page_directory_t;
 
 void switch_page_directory(page_directory_t *dir);
@@ -35,3 +36,5 @@ uint32_t kmalloc_ap(uint32_t sz, uint32_t *phys);
 uint32_t kmalloc(uint32_t sz);
 void alloc_frame(page_t *page, int is_kernel, int is_writeable);
 void free_frame(page_t *page);
+void init_mem();
+page_t *get_page(uint32_t address, int make, page_directory_t *dir);

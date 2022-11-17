@@ -7,9 +7,6 @@
 #include <kernel/stdio.h>
 #include <kernel/mem.h>
 
-void _kernel_end(void);
-uintptr_t vaddr = (uintptr_t) &_kernel_end;
-
 static volatile struct limine_memmap_request memmap_request = {
     .id = LIMINE_MEMMAP_REQUEST,
     .revision = 0
@@ -24,6 +21,7 @@ void kernel_main()
     printf("Second memory-mapped entry type: %d\n", memmap_entry->type);
     printf("Second memory-mapped entry base: %x\n", memmap_entry->base);
     printf("Second memory-mapped entry length: %x\n", memmap_entry->length);
+	init_mem();
 	printf("Cotton Candy OS\n");
 	printf("WIP\n");
 	breakpoint;
