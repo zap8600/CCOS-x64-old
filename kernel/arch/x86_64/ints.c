@@ -1,11 +1,9 @@
 #include <stdint.h>
 
-#include <kernel/limine.h>
 #include <kernel/tty.h>
 #include <kernel/io.h>
 #include <kernel/ints.h>
 #include <kernel/dbg.h>
-#include <kernel/stdio.h>
 
 #define PIC1		0x20		/* IO base address for master PIC */
 #define PIC2		0xA0		/* IO base address for slave PIC */
@@ -82,6 +80,7 @@ char *pagefault_error[] = {
 
 void isr_handler(registers_t *r)
 {
+    /*
     printf("Received ISR. ISR number: %d. ", r->int_no);
     printf("Exception: %s.\n", exception_messages[r->int_no]);
     if(r->int_no == 14)
@@ -108,6 +107,7 @@ void isr_handler(registers_t *r)
         printf("Address: 0x%x\n", &faulting_address);
         printf("Value: 0x%x\n", faulting_address);
     }
+    */
 }
 
 void irq_handler(registers_t *r)

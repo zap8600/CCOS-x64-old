@@ -31,7 +31,6 @@ KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
 kernel/tty.o \
-kernel/mem.o \
 misc/string.o \
 misc/stdio.o \
 

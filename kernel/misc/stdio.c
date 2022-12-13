@@ -111,5 +111,5 @@ void printf(char *fmt, ...)
     __builtin_va_list args;
     __builtin_va_start(args, fmt);
     vsprintf(s,fmt,args);
-    terminal_writestring(s);
+    /*terminal_writestring(s); */
 }
