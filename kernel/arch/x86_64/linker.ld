@@ -1,40 +1,49 @@
 OUTPUT_FORMAT(elf64-x86-64)
-OUTPUT_ARCH(i386:x86-64)
-
 ENTRY(_start)
+
 SECTIONS
 {
-    . = 0xffffffff80000000;
+	. = 1M;
+	phys = .;
 
-	_kernel_start = .;
-    .text BLOCK(4K) : ALIGN(4K) {
-        *(.multiboot)
-        *(.text)
-    }
+	.text BLOCK(4K) : ALIGN(4K)
+	{
+		KEEP(*(.multiboot))
+		*(.bootstrap)
+		code = .;
+		*(.text)
+	}
 
-    /* Move to the next memory page for .rodata */
-    . += CONSTANT(MAXPAGESIZE);
+	.rodata BLOCK(4K) : ALIGN(4K)
+	{
+		*(.rodata)
+	}
 
-    .rodata BLOCK(4K) : ALIGN(4K) {
-        *(.rodata)
-    }
+	.data BLOCK(4K) : ALIGN(4K)
+	{
+		data = .;
+		*(.data)
+		*(.symbols)
+		PROVIDE(kernel_symbols_start = .);
+		PROVIDE(kernel_symbols_end = .);
+		PROVIDE(bss_start = .);
+	}
 
-    /* Move to the next memory page for .data */
-    . += CONSTANT(MAXPAGESIZE);
+	.bss BLOCK(4K) : ALIGN(4K)
+	{
+		bss = .;
+		*(COMMON)
+		*(.bss)
+		*(.stack)
+	}
 
-    .data BLOCK(4K) : ALIGN(4K) {
-        *(.data)
-    }
+	end = .;
 
-    .bss BLOCK(4K) : ALIGN(4K) {
-        *(COMMON)
-        *(.bss)
-    }
-	_kernel_end = .;
+	/DISCARD/ :
+	{
+		*(.comment)
+		*(.eh_frame)
+		*(.note.gnu.build-id)
+	}
 
-    /* Discard .note.* and .eh_frame since they may cause issues on some hosts. */
-    /DISCARD/ : {
-        *(.eh_frame)
-        *(.note .note.*)
-    }
 }
