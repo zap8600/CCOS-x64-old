@@ -11,6 +11,11 @@ static volatile struct limine_memmap_request memmap_request = {
     .revision = 0
 };
 
+static volatile struct limine_framebuffer_request framebuffer_request = {
+	.id = LIMINE_FRAMEBUFFER_REQUEST,
+	.revision = 0
+};
+
 void kernel_main()
 {
 	init_gdt();
@@ -28,5 +33,8 @@ void kernel_main()
 	printf("WIP\n");
 	breakpoint;
 	printf("ISRs installed and working.\n");
+	struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
+	printf("Framebuffer address: %x\n", framebuffer->address);
+	printf("The framebuffer is currently not used, due to errors during SSFN's simple renderer initialization.\n");
 	while (1) {}
 }
