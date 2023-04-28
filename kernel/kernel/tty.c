@@ -33,6 +33,5 @@ void terminal_write(const char* data, size_t size)
 
 void terminal_writestring(const char* data)
 {
-    struct limine_terminal *terminal = terminal_request.response->terminals[0];
-    terminal_request.response->write(terminal, data, size);
+    terminal_write(data, strlen(data));
 }
