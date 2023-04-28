@@ -2,6 +2,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kernel/limine.h>
+#include <kernel/mem.h>
+#include <kernel/stdio.h>
 
 #define PMM_BLOCK_SIZE 4096
 
@@ -22,6 +24,15 @@ void init_pmem() {
             free_mem_addr = memmap_entry->base;
             break;
         }
+    }
+}
+
+//list_memmap function. Prints the memory map to the screen.
+void list_memmap() {
+    struct limine_memmap_entry *memmap_entry;
+    for (int i = 0; i < memmap_request.response->entry_count; i++) {
+        memmap_entry = memmap_request.response->entries[i];
+        printf("base: %x, length: %x, type: %x\n", memmap_entry->base, memmap_entry->length, memmap_entry->type);
     }
 }
 

@@ -25,16 +25,17 @@ void kernel_main()
 	printf("Second memory-mapped entry type: %d\n", memmap_entry->type);
 	printf("Second memory-mapped entry base: %x\n", memmap_entry->base);
 	printf("Second memory-mapped entry length: %x\n", memmap_entry->length);
-	/*
-	Use when memory management is actually working
-	init_mem();
-	*/
 	printf("Cotton Candy OS\n");
 	printf("WIP\n");
 	breakpoint;
 	printf("ISRs installed and working.\n");
 	struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 	printf("Framebuffer address: %x\n", framebuffer->address);
-	printf("The framebuffer is currently not used, due to errors during SSFN's simple renderer initialization.\n");
+	// The framebuffer is currently not used, due to errors during SSFN's simple renderer initialization.
+	init_pmem();
+	printf("Physical memory manager initialized.\n");
+	uint32_t ptr;
+	uint32_t page = pkmalloc(1000, 1, &ptr);
+	printf("Allocated physical memory at %x with `pkmalloc(1000, 1, &ptr)` in the kernel.\n", ptr);
 	while (1) {}
 }
